@@ -38,17 +38,32 @@ Behavior may vary by printer model and firmware. Printer connections can also be
 limited by the firmware, so close unnecessary slicer or browser sessions if the
 application reports that no WebSocket connection is available.
 
-## Install
+## Deployment options
 
-Run the generated setup executable:
+Releases provide two self-contained Windows x64 deployment options.
+
+### Installer
+
+Download and run the setup executable:
 
 ```text
 artifacts\installer\ElegooPrinterEvents-Setup-1.0.0.exe
 ```
 
-The installer is self-contained for Windows x64, so the target computer does not
-need a separate .NET installation. It installs the application for the current
-user and does not require administrator privileges.
+It installs the application for the current user, creates Start menu shortcuts,
+and does not require administrator privileges.
+
+### Portable application
+
+Download the portable ZIP, unzip it, and run:
+
+```text
+ElegooLink.Desktop.exe
+```
+
+No installation is required. Both deployment formats include the .NET runtime
+and native bridge, so the target computer does not need a separate .NET
+installation.
 
 ## Using the desktop application
 
@@ -156,18 +171,19 @@ you only need to publish and package the application.
 
 ### Creating a GitHub release
 
-The **Build installer and create release** workflow can publish a release
+The **Build installer and portable release** workflow can publish a release
 manually:
 
 1. Open the repository's **Actions** tab.
-2. Select **Build installer and create release**.
+2. Select **Build installer and portable release**.
 3. Select **Run workflow**.
 4. Enter a numeric version such as `1.0.0` and choose whether it is a prerelease.
 
 The workflow builds the native bridge and .NET projects on Windows with Visual
-Studio 2026, runs the tests, creates the installer, performs a silent
-install/uninstall smoke test, and publishes the installer and its SHA-256
-checksum in a GitHub Release tagged with the selected version.
+Studio 2026, runs the tests, creates both deployment formats, smoke-tests their
+contents, and publishes them with SHA-256 checksums in a GitHub Release tagged
+with the selected version. The release notes explain how to use the installer
+and portable application.
 
 ## Optional console listener
 
