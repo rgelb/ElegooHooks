@@ -120,4 +120,7 @@
   <data name="_placeholderLabel.Text" xml:space="preserve">
     <value>Placeholders: {PrinterId}, {PrinterName}, {PrinterIp}, {Event}, {TimestampUtc}, {Message}, {FileName}, {Progress}, {CurrentLayer}, {TotalLayers}, {State}, {SubState}, {ErrorCodes}. Quote placeholders in the arguments field when their values may contain spaces.</value>
   </data>
+  <data name="$this.Icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Assets\ApplicationIcon.ico;System.Drawing.Icon, System.Drawing</value>
+  </data>
 </root>

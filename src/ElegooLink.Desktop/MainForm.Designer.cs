@@ -40,6 +40,7 @@ partial class MainForm
     }
 
     private void InitializeComponent() {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
         components = new System.ComponentModel.Container();
         DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
         DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
@@ -443,6 +444,7 @@ partial class MainForm
         ClientSize = new Size(1834, 1090);
         Controls.Add(_mainSplitContainer);
         Font = new Font("Segoe UI", 9F);
+        Icon = (Icon)resources.GetObject("$this.Icon")!;
         MinimumSize = new Size(980, 620);
         Name = "MainForm";
         StartPosition = FormStartPosition.CenterScreen;
