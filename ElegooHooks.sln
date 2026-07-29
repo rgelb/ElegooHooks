@@ -14,6 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElegooLink.Events.Tests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E4D55604-0645-46E7-8DE3-0DBF3188FBA0}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\release.yml = .github\workflows\release.yml
 		.gitignore = .gitignore
 		global.json = global.json
 		installer\ElegooPrinterEvents.iss = installer\ElegooPrinterEvents.iss

@@ -1,0 +1,188 @@
+name: Build installer and create release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version (for example, 1.0.0)
+        required: true
+        default: 1.0.0
+        type: string
+      prerelease:
+        description: Mark the GitHub release as a prerelease
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, test, package, and release
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 120
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Validate release version
+        id: release
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          $version = $env:RELEASE_VERSION.Trim()
+          if ($version -notmatch '^\d+\.\d+\.\d+(?:\.\d+)?$') {
+              throw "Version '$version' is invalid. Use a numeric version such as 1.0.0."
+          }
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup --yes --no-progress
+          if ($LASTEXITCODE -ne 0) {
+              throw "Chocolatey failed to install Inno Setup with exit code $LASTEXITCODE."
+          }
+
+      - name: Build native bridge and .NET projects
+        run: .\scripts\build.ps1 -Configuration Release
+
+      - name: Build installer
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: .\scripts\build-installer.ps1 -Version $env:RELEASE_VERSION -SkipBuild
+
+      - name: Smoke-test installer
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          $installerPath = Join-Path $env:GITHUB_WORKSPACE `
+              "artifacts\installer\ElegooPrinterEvents-Setup-$env:RELEASE_VERSION.exe"
+          $installDirectory = Join-Path $env:RUNNER_TEMP `
+              "ElegooPrinterEvents-$env:RELEASE_VERSION"
+
+          if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
+              throw "The installer was not found at '$installerPath'."
+          }
+
+          $installArguments = @(
+              "/VERYSILENT",
+              "/SUPPRESSMSGBOXES",
+              "/NORESTART",
+              "/NOICONS",
+              ('/DIR="' + $installDirectory + '"')
+          )
+
+          $installProcess = Start-Process `
+              -FilePath $installerPath `
+              -ArgumentList $installArguments `
+              -Wait `
+              -PassThru `
+              -WindowStyle Hidden
+          if ($installProcess.ExitCode -ne 0) {
+              throw "The installer exited with code $($installProcess.ExitCode)."
+          }
+
+          $requiredFiles = @(
+              (Join-Path $installDirectory "ElegooLink.Desktop.exe"),
+              (Join-Path $installDirectory "elegoo_link_bridge.dll"),
+              (Join-Path $installDirectory "unins000.exe")
+          )
+          foreach ($requiredFile in $requiredFiles) {
+              if (-not (Test-Path -LiteralPath $requiredFile -PathType Leaf)) {
+                  throw "The installed file '$requiredFile' is missing."
+              }
+          }
+
+          $uninstallerPath = Join-Path $installDirectory "unins000.exe"
+          $uninstallProcess = Start-Process `
+              -FilePath $uninstallerPath `
+              -ArgumentList @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART") `
+              -Wait `
+              -PassThru `
+              -WindowStyle Hidden
+          if ($uninstallProcess.ExitCode -ne 0) {
+              throw "The uninstaller exited with code $($uninstallProcess.ExitCode)."
+          }
+
+          for ($attempt = 0; $attempt -lt 20 -and (Test-Path -LiteralPath $installDirectory); $attempt++) {
+              Start-Sleep -Milliseconds 250
+          }
+          if (Test-Path -LiteralPath $installDirectory) {
+              throw "The uninstaller left the installation directory '$installDirectory'."
+          }
+
+      - name: Create SHA-256 checksum
+        id: package
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          $installer = Get-Item -LiteralPath (
+              Join-Path $env:GITHUB_WORKSPACE `
+                  "artifacts\installer\ElegooPrinterEvents-Setup-$env:RELEASE_VERSION.exe"
+          )
+          $checksumPath = "$($installer.FullName).sha256"
+          $hash = Get-FileHash -LiteralPath $installer.FullName -Algorithm SHA256
+          "$($hash.Hash.ToLowerInvariant())  $($installer.Name)" |
+              Set-Content -LiteralPath $checksumPath -Encoding ascii
+
+          "installer_path=$($installer.FullName)" >> $env:GITHUB_OUTPUT
+          "checksum_path=$checksumPath" >> $env:GITHUB_OUTPUT
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ElegooPrinterEvents-${{ steps.release.outputs.version }}
+          path: |
+            ${{ steps.package.outputs.installer_path }}
+            ${{ steps.package.outputs.checksum_path }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          INSTALLER_PATH: ${{ steps.package.outputs.installer_path }}
+          CHECKSUM_PATH: ${{ steps.package.outputs.checksum_path }}
+          IS_PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          $arguments = @(
+              "release",
+              "create",
+              $env:RELEASE_TAG,
+              $env:INSTALLER_PATH,
+              $env:CHECKSUM_PATH,
+              "--repo",
+              $env:GITHUB_REPOSITORY,
+              "--target",
+              $env:GITHUB_SHA,
+              "--title",
+              "Elegoo Printer Events $env:RELEASE_VERSION",
+              "--generate-notes"
+          )
+          if ($env:IS_PRERELEASE -eq "true") {
+              $arguments += "--prerelease"
+          }
+
+          & gh @arguments
+          if ($LASTEXITCODE -ne 0) {
+              throw "GitHub CLI failed to create release '$env:RELEASE_TAG'."
+          }

@@ -154,6 +154,21 @@ Specify a different release version with:
 Use `-SkipBuild` only when the native bridge and Release build already exist and
 you only need to publish and package the application.
 
+### Creating a GitHub release
+
+The **Build installer and create release** workflow can publish a release
+manually:
+
+1. Open the repository's **Actions** tab.
+2. Select **Build installer and create release**.
+3. Select **Run workflow**.
+4. Enter a numeric version such as `1.0.0` and choose whether it is a prerelease.
+
+The workflow builds the native bridge and .NET projects on Windows with Visual
+Studio 2026, runs the tests, creates the installer, performs a silent
+install/uninstall smoke test, and publishes the installer and its SHA-256
+checksum in a GitHub Release tagged with the selected version.
+
 ## Optional console listener
 
 The repository also contains a small console application for diagnostics and
