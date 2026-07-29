@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NativeBridgePath Condition="'$(OS)' == 'Windows_NT'">..\..\native\artifacts\$(Configuration)\elegoo_link_bridge.dll</NativeBridgePath>
+    <NativeBridgePath Condition="'$(OS)' == 'Windows_NT' and !Exists('$(NativeBridgePath)') and Exists('..\..\native\artifacts\Release\elegoo_link_bridge.dll')">..\..\native\artifacts\Release\elegoo_link_bridge.dll</NativeBridgePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ElegooLink.Events\ElegooLink.Events.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
+    <None Include="$(NativeBridgePath)"
+          Link="elegoo_link_bridge.dll"
+          CopyToOutputDirectory="PreserveNewest"
+          Condition="Exists('$(NativeBridgePath)')" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
+    <None Include="..\..\native\artifacts\$(Configuration)\libelegoo_link_bridge.so"
+          Link="libelegoo_link_bridge.so"
+          CopyToOutputDirectory="PreserveNewest"
+          Condition="Exists('..\..\native\artifacts\$(Configuration)\libelegoo_link_bridge.so')" />
+    <None Include="..\..\native\artifacts\$(Configuration)\libelegoo_link_bridge.dylib"
+          Link="libelegoo_link_bridge.dylib"
+          CopyToOutputDirectory="PreserveNewest"
+          Condition="Exists('..\..\native\artifacts\$(Configuration)\libelegoo_link_bridge.dylib')" />
+  </ItemGroup>
+
+  <Target Name="WarnWhenWindowsNativeBridgeIsMissing"
+          BeforeTargets="Build"
+          Condition="'$(OS)' == 'Windows_NT' and !Exists('$(NativeBridgePath)')">
+    <Warning Text="The Elegoo Link native bridge is missing. Run scripts\build.ps1 before starting the console application." />
+  </Target>
+</Project>

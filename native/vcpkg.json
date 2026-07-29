@@ -1,0 +1,25 @@
+{
+  "name": "elegoo-link-dotnet-bridge",
+  "version-string": "1.0.0",
+  "dependencies": [
+    {
+      "name": "paho-mqttpp3",
+      "version>=": "1.5.2"
+    },
+    {
+      "name": "ixwebsocket",
+      "default-features": false,
+      "features": [
+        "openssl"
+      ]
+    },
+    {
+      "name": "curl",
+      "version>=": "8.14.1"
+    },
+    "nlohmann-json",
+    "openssl"
+  ],
+  "builtin-baseline": "f75c836a67777a86a2c1116a28b179827f028b66"
+}
+

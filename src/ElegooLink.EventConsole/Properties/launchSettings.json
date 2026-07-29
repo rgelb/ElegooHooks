@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ElegooLink.EventConsole": {
+      "commandName": "Project",
+      "commandLineArgs": "--host 192.168.1.2 --type cc"
+    }
+  }
+}

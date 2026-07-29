@@ -1,0 +1,60 @@
+# .NET build and test output
+**/bin/
+**/obj/
+**/publish/
+artifacts/
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+coverage.*
+
+# Native/CMake/vcpkg build output
+.tools/
+native/build/
+native/artifacts/
+native/.cache/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+cmake-build-*/
+CMakeUserPresets.json
+*.lib
+*.exp
+*.pdb
+
+# IDE and editor state
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+*.pfx
+*.p12
+*.snk
+*.key
+*.pem
+*.jks
+
+# Package/build archives and logs
+*.nupkg
+*.snupkg
+*.log
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
