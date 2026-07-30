@@ -20,6 +20,8 @@ The application is built with .NET 10 and Windows Forms. It uses the official
 - Retry offline connections and remove printers from the application.
 - Launch configurable executables for connection, print-lifecycle, and error
   events.
+- Hide the application in the Windows notification area while monitoring and
+  event actions continue running.
 - Run entirely as the current Windows user without a background service.
 
 ## Printer compatibility
@@ -80,6 +82,12 @@ connection fails, allowing it to be retried later.
 
 Select a printer in the left pane to view its events. Offline printers can be
 retried from the printer list's context menu.
+
+Use **Minimize to tray** to hide the application in the Windows notification
+area while printer monitoring and event actions continue. Double-click the tray
+icon or select **Open Elegoo Printer Events** to restore the window. Select
+**Exit** from the tray menu to disconnect and close the application. The normal
+Windows minimize button continues to minimize the application to the taskbar.
 
 ### Event automation
 

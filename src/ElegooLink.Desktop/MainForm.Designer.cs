@@ -25,9 +25,15 @@ partial class MainForm
     private FlowLayoutPanel _logActions = null!;
     private Button _clearButton = null!;
     private Button _copyButton = null!;
+    private Button _minimizeToTrayButton = null!;
     private DataGridView _logGrid = null!;
     private GroupBox _detailsGroup = null!;
     private TextBox _detailsTextBox = null!;
+    private ContextMenuStrip _trayContextMenu = null!;
+    private ToolStripMenuItem _openTrayMenuItem = null!;
+    private ToolStripSeparator _trayContextSeparator = null!;
+    private ToolStripMenuItem _exitTrayMenuItem = null!;
+    private NotifyIcon _trayIcon = null!;
 
     protected override void Dispose(bool disposing)
     {
@@ -66,9 +72,15 @@ partial class MainForm
         _logActions = new FlowLayoutPanel();
         _clearButton = new Button();
         _copyButton = new Button();
+        _minimizeToTrayButton = new Button();
         _logGrid = new DataGridView();
         _detailsGroup = new GroupBox();
         _detailsTextBox = new TextBox();
+        _trayContextMenu = new ContextMenuStrip(components);
+        _openTrayMenuItem = new ToolStripMenuItem();
+        _trayContextSeparator = new ToolStripSeparator();
+        _exitTrayMenuItem = new ToolStripMenuItem();
+        _trayIcon = new NotifyIcon(components);
         _timestampColumn = new DataGridViewTextBoxColumn();
         _eventColumn = new DataGridViewTextBoxColumn();
         _messageColumn = new DataGridViewTextBoxColumn();
@@ -84,6 +96,7 @@ partial class MainForm
         _logActions.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)_logGrid).BeginInit();
         _detailsGroup.SuspendLayout();
+        _trayContextMenu.SuspendLayout();
         SuspendLayout();
         // 
         // _mainSplitContainer
@@ -316,11 +329,12 @@ partial class MainForm
         _logActions.AutoSize = true;
         _logActions.Controls.Add(_clearButton);
         _logActions.Controls.Add(_copyButton);
+        _logActions.Controls.Add(_minimizeToTrayButton);
         _logActions.FlowDirection = FlowDirection.RightToLeft;
-        _logActions.Location = new Point(1035, 18);
+        _logActions.Location = new Point(833, 18);
         _logActions.Name = "_logActions";
         _logHeaderLayout.SetRowSpan(_logActions, 2);
-        _logActions.Size = new Size(254, 44);
+        _logActions.Size = new Size(456, 44);
         _logActions.TabIndex = 2;
         _logActions.WrapContents = false;
         // 
@@ -349,6 +363,19 @@ partial class MainForm
         _copyButton.Text = "Copy details";
         _copyButton.UseVisualStyleBackColor = true;
         _copyButton.Click += CopyButton_Click;
+        //
+        // _minimizeToTrayButton
+        //
+        _minimizeToTrayButton.AutoSize = true;
+        _minimizeToTrayButton.Location = new Point(0, 0);
+        _minimizeToTrayButton.Margin = new Padding(0, 0, 8, 0);
+        _minimizeToTrayButton.Name = "_minimizeToTrayButton";
+        _minimizeToTrayButton.Padding = new Padding(8, 2, 8, 2);
+        _minimizeToTrayButton.Size = new Size(202, 44);
+        _minimizeToTrayButton.TabIndex = 2;
+        _minimizeToTrayButton.Text = "Minimize to &tray";
+        _minimizeToTrayButton.UseVisualStyleBackColor = true;
+        _minimizeToTrayButton.Click += MinimizeToTrayButton_Click;
         // 
         // _logGrid
         // 
@@ -411,7 +438,41 @@ partial class MainForm
         _detailsTextBox.Size = new Size(1276, 252);
         _detailsTextBox.TabIndex = 0;
         _detailsTextBox.WordWrap = false;
-        // 
+        //
+        // _trayContextMenu
+        //
+        _trayContextMenu.ImageScalingSize = new Size(28, 28);
+        _trayContextMenu.Items.AddRange(new ToolStripItem[] { _openTrayMenuItem, _trayContextSeparator, _exitTrayMenuItem });
+        _trayContextMenu.Name = "_trayContextMenu";
+        _trayContextMenu.Size = new Size(338, 82);
+        //
+        // _openTrayMenuItem
+        //
+        _openTrayMenuItem.Name = "_openTrayMenuItem";
+        _openTrayMenuItem.Size = new Size(337, 36);
+        _openTrayMenuItem.Text = "&Open Elegoo Printer Events";
+        _openTrayMenuItem.Click += OpenTrayMenuItem_Click;
+        //
+        // _trayContextSeparator
+        //
+        _trayContextSeparator.Name = "_trayContextSeparator";
+        _trayContextSeparator.Size = new Size(334, 6);
+        //
+        // _exitTrayMenuItem
+        //
+        _exitTrayMenuItem.Name = "_exitTrayMenuItem";
+        _exitTrayMenuItem.Size = new Size(337, 36);
+        _exitTrayMenuItem.Text = "E&xit";
+        _exitTrayMenuItem.Click += ExitTrayMenuItem_Click;
+        //
+        // _trayIcon
+        //
+        _trayIcon.ContextMenuStrip = _trayContextMenu;
+        _trayIcon.Icon = (Icon)resources.GetObject("$this.Icon")!;
+        _trayIcon.Text = "Elegoo Printer Events";
+        _trayIcon.DoubleClick += TrayIcon_DoubleClick;
+        _trayIcon.BalloonTipClicked += TrayIcon_BalloonTipClicked;
+        //
         // _timestampColumn
         // 
         _timestampColumn.HeaderText = "Time";
@@ -469,6 +530,7 @@ partial class MainForm
         ((System.ComponentModel.ISupportInitialize)_logGrid).EndInit();
         _detailsGroup.ResumeLayout(false);
         _detailsGroup.PerformLayout();
+        _trayContextMenu.ResumeLayout(false);
         ResumeLayout(false);
     }
 

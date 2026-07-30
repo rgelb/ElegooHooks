@@ -10,6 +10,8 @@ internal sealed partial class MainForm : Form
     private bool _startupComplete;
     private bool _closing;
     private bool _allowClose;
+    private bool _trayTipShown;
+    private FormWindowState _windowStateBeforeTray = FormWindowState.Normal;
 
     public MainForm() {
         InitializeComponent();
@@ -74,6 +76,7 @@ internal sealed partial class MainForm : Form
         }
 
         _closing = true;
+        _trayIcon.Visible = false;
         _lifetime.Cancel();
         SetUiBusy(true);
         _logSubheader.Text = "Disconnecting printers...";
@@ -242,6 +245,69 @@ internal sealed partial class MainForm : Form
                 $"[{FormatLocalTimestamp(entry.TimestampUtc)}] {entry.EventName}: {entry.Message}" +
                 $"{Environment.NewLine}{Environment.NewLine}{entry.Details}");
         }
+    }
+
+    private void MinimizeToTrayButton_Click(
+        object? sender,
+        EventArgs eventArgs) {
+        if (_closing) {
+            return;
+        }
+
+        if (WindowState is FormWindowState.Normal or FormWindowState.Maximized) {
+            _windowStateBeforeTray = WindowState;
+        }
+
+        _trayIcon.Visible = true;
+        ShowInTaskbar = false;
+        Hide();
+
+        if (!_trayTipShown) {
+            _trayTipShown = true;
+            _trayIcon.ShowBalloonTip(
+                3_000,
+                "Elegoo Printer Events",
+                "Printer monitoring and event actions are still running.",
+                ToolTipIcon.Info);
+        }
+    }
+
+    private void OpenTrayMenuItem_Click(
+        object? sender,
+        EventArgs eventArgs) =>
+        RestoreFromTray();
+
+    private void TrayIcon_DoubleClick(
+        object? sender,
+        EventArgs eventArgs) =>
+        RestoreFromTray();
+
+    private void TrayIcon_BalloonTipClicked(
+        object? sender,
+        EventArgs eventArgs) =>
+        RestoreFromTray();
+
+    private void ExitTrayMenuItem_Click(
+        object? sender,
+        EventArgs eventArgs) {
+        if (_closing) {
+            return;
+        }
+
+        _trayIcon.Visible = false;
+        Close();
+    }
+
+    private void RestoreFromTray() {
+        if (_closing || Visible) {
+            return;
+        }
+
+        ShowInTaskbar = true;
+        Show();
+        WindowState = _windowStateBeforeTray;
+        Activate();
+        _trayIcon.Visible = false;
     }
 
     private void UpdatePrinterList() {
