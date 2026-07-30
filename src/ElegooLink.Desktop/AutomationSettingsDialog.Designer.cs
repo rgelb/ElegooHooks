@@ -340,7 +340,7 @@ partial class AutomationSettingsDialog
         ClientSize = new Size(1603, 1233);
         Controls.Add(_rootLayout);
         Font = new Font("Segoe UI", 9F);
-        Icon = (Icon)resources.GetObject("$this.Icon")!;
+        Icon = (Icon)resources.GetObject("$this.Icon");
         MinimizeBox = false;
         MinimumSize = new Size(780, 560);
         Name = "AutomationSettingsDialog";

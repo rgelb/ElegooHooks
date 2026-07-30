@@ -15,6 +15,7 @@ internal sealed partial class MainForm : Form
 
     public MainForm() {
         InitializeComponent();
+        _trayIcon.Icon = Icon;
         if (System.ComponentModel.LicenseManager.UsageMode !=
             System.ComponentModel.LicenseUsageMode.Designtime) {
             SubscribeToController();
@@ -242,7 +243,7 @@ internal sealed partial class MainForm : Form
     private void CopyButton_Click(object? sender, EventArgs eventArgs) {
         if (SelectedLogEntry() is { } entry) {
             Clipboard.SetText(
-                $"[{FormatLocalTimestamp(entry.TimestampUtc)}] {entry.EventName}: {entry.Message}" +
+                $"[{FormatLocalTimestampWithOffset(entry.TimestampUtc)}] {entry.EventName}: {entry.Message}" +
                 $"{Environment.NewLine}{Environment.NewLine}{entry.Details}");
         }
     }
@@ -486,6 +487,12 @@ internal sealed partial class MainForm : Form
         };
 
     private static string FormatLocalTimestamp(DateTimeOffset timestampUtc) =>
+        timestampUtc
+            .ToLocalTime()
+            .ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+    private static string FormatLocalTimestampWithOffset(
+        DateTimeOffset timestampUtc) =>
         timestampUtc
             .ToLocalTime()
             .ToString("yyyy-MM-dd HH:mm:ss.fff zzz");

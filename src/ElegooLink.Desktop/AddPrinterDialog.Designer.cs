@@ -255,7 +255,7 @@ partial class AddPrinterDialog
         Controls.Add(_rootLayout);
         Font = new Font("Segoe UI", 9F);
         FormBorderStyle = FormBorderStyle.FixedDialog;
-        Icon = (Icon)resources.GetObject("$this.Icon")!;
+        Icon = (Icon)resources.GetObject("$this.Icon");
         MaximizeBox = false;
         MinimizeBox = false;
         Name = "AddPrinterDialog";

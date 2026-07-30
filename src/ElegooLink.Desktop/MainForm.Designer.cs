@@ -468,7 +468,6 @@ partial class MainForm
         // _trayIcon
         //
         _trayIcon.ContextMenuStrip = _trayContextMenu;
-        _trayIcon.Icon = (Icon)resources.GetObject("$this.Icon")!;
         _trayIcon.Text = "Elegoo Printer Events";
         _trayIcon.DoubleClick += TrayIcon_DoubleClick;
         _trayIcon.BalloonTipClicked += TrayIcon_BalloonTipClicked;
@@ -479,7 +478,7 @@ partial class MainForm
         _timestampColumn.MinimumWidth = 9;
         _timestampColumn.Name = "_timestampColumn";
         _timestampColumn.ReadOnly = true;
-        _timestampColumn.Width = 350;
+        _timestampColumn.Width = 250;
         // 
         // _eventColumn
         // 
@@ -505,7 +504,7 @@ partial class MainForm
         ClientSize = new Size(1834, 1090);
         Controls.Add(_mainSplitContainer);
         Font = new Font("Segoe UI", 9F);
-        Icon = (Icon)resources.GetObject("$this.Icon")!;
+        Icon = (Icon)resources.GetObject("$this.Icon");
         MinimumSize = new Size(980, 620);
         Name = "MainForm";
         StartPosition = FormStartPosition.CenterScreen;
