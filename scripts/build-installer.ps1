@@ -11,9 +11,10 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $desktopProject = Join-Path $projectRoot "src\ElegooLink.Desktop\ElegooLink.Desktop.csproj"
 $publishProfile = Join-Path $projectRoot "src\ElegooLink.Desktop\Properties\PublishProfiles\FolderProfile.pubxml"
 $publishDirectory = Join-Path $projectRoot "src\ElegooLink.Desktop\bin\Release\net10.0-windows\publish\win-x64"
-$installerScript = Join-Path $projectRoot "installer\ElegooPrinterEvents.iss"
+$installerScript = Join-Path $projectRoot "installer\ElegooHooks.iss"
 $installerOutputDirectory = Join-Path $projectRoot "artifacts\installer"
-$installerFileName = "ElegooPrinterEvents-Setup-$Version.exe"
+$installerBaseName = "ElegooHooks-Setup-$Version"
+$installerFileName = "$installerBaseName.exe"
 
 function Resolve-InnoCompiler {
     param([string]$RequestedPath)
@@ -86,6 +87,7 @@ $compilerArguments = @(
     "/DMyAppVersion=$Version",
     "/DPublishDir=$publishDirectory",
     "/DInstallerOutputDir=$installerOutputDirectory",
+    "/DInstallerBaseName=$installerBaseName",
     $installerScript
 )
 

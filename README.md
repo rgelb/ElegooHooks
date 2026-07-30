@@ -49,7 +49,7 @@ Releases provide two self-contained Windows x64 deployment options.
 Download and run the setup executable:
 
 ```text
-artifacts\installer\ElegooPrinterEvents-Setup-1.0.0.exe
+artifacts\installer\ElegooHooks-Setup-1.0.0.exe
 ```
 
 It installs the application for the current user, creates Start menu shortcuts,
@@ -165,7 +165,7 @@ This performs a Release build and test run, publishes the self-contained Windows
 x64 application, verifies the native bridge, and creates:
 
 ```text
-artifacts\installer\ElegooPrinterEvents-Setup-1.0.0.exe
+artifacts\installer\ElegooHooks-Setup-1.0.0.exe
 ```
 
 Specify a different release version with:

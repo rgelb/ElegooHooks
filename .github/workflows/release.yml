@@ -76,7 +76,7 @@ jobs:
               "src\ElegooLink.Desktop\bin\Release\net10.0-windows\publish\win-x64"
           $portableDirectory = Join-Path $env:GITHUB_WORKSPACE "artifacts\portable"
           $portablePath = Join-Path $portableDirectory `
-              "ElegooPrinterEvents-Portable-$env:RELEASE_VERSION-win-x64.zip"
+              "ElegooHooks-Portable-$env:RELEASE_VERSION-win-x64.zip"
 
           $requiredFiles = @(
               (Join-Path $publishDirectory "ElegooLink.Desktop.exe"),
@@ -109,9 +109,9 @@ jobs:
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           $installerPath = Join-Path $env:GITHUB_WORKSPACE `
-              "artifacts\installer\ElegooPrinterEvents-Setup-$env:RELEASE_VERSION.exe"
+              "artifacts\installer\ElegooHooks-Setup-$env:RELEASE_VERSION.exe"
           $installDirectory = Join-Path $env:RUNNER_TEMP `
-              "ElegooPrinterEvents-$env:RELEASE_VERSION"
+              "ElegooHooks-$env:RELEASE_VERSION"
 
           if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
               throw "The installer was not found at '$installerPath'."
@@ -169,9 +169,9 @@ jobs:
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           $portablePath = Join-Path $env:GITHUB_WORKSPACE `
-              "artifacts\portable\ElegooPrinterEvents-Portable-$env:RELEASE_VERSION-win-x64.zip"
+              "artifacts\portable\ElegooHooks-Portable-$env:RELEASE_VERSION-win-x64.zip"
           $extractDirectory = Join-Path $env:RUNNER_TEMP `
-              "ElegooPrinterEvents-Portable-$env:RELEASE_VERSION"
+              "ElegooHooks-Portable-$env:RELEASE_VERSION"
 
           if (-not (Test-Path -LiteralPath $portablePath -PathType Leaf)) {
               throw "The portable package was not found at '$portablePath'."
@@ -198,11 +198,11 @@ jobs:
         run: |
           $installer = Get-Item -LiteralPath (
               Join-Path $env:GITHUB_WORKSPACE `
-                  "artifacts\installer\ElegooPrinterEvents-Setup-$env:RELEASE_VERSION.exe"
+                  "artifacts\installer\ElegooHooks-Setup-$env:RELEASE_VERSION.exe"
           )
           $portable = Get-Item -LiteralPath (
               Join-Path $env:GITHUB_WORKSPACE `
-                  "artifacts\portable\ElegooPrinterEvents-Portable-$env:RELEASE_VERSION-win-x64.zip"
+                  "artifacts\portable\ElegooHooks-Portable-$env:RELEASE_VERSION-win-x64.zip"
           )
           $releaseDirectory = Join-Path $env:GITHUB_WORKSPACE "artifacts\release"
           $checksumPath = Join-Path $releaseDirectory "SHA256SUMS.txt"
@@ -222,7 +222,7 @@ jobs:
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ElegooPrinterEvents-${{ steps.release.outputs.version }}
+          name: ElegooHooks-${{ steps.release.outputs.version }}
           path: |
             ${{ steps.package.outputs.installer_path }}
             ${{ steps.package.outputs.portable_path }}
@@ -250,7 +250,7 @@ jobs:
           ### Installer
 
           Download **$installerName** and run it. The setup application installs
-          Elegoo Printer Events for the current Windows user and creates Start
+          Elegoo Hooks for the current Windows user and creates Start
           menu shortcuts.
 
           ### Portable application
@@ -274,7 +274,7 @@ jobs:
               "--target",
               $env:GITHUB_SHA,
               "--title",
-              "Elegoo Printer Events $env:RELEASE_VERSION",
+              "Elegoo Hooks $env:RELEASE_VERSION",
               "--notes",
               $releaseNotes,
               "--generate-notes"

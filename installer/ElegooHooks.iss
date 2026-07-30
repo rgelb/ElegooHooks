@@ -10,6 +10,10 @@
   #define InstallerOutputDir "..\artifacts\installer"
 #endif
 
+#ifndef InstallerBaseName
+  #define InstallerBaseName "ElegooHooks-Setup-" + MyAppVersion
+#endif
+
 #define MyAppName "Elegoo Hooks"
 #define MyAppPublisher "Robert Gelb"
 #define MyAppExeName "ElegooLink.Desktop.exe"
@@ -23,7 +27,7 @@ DefaultDirName={localappdata}\Programs\{#MyAppName}
 DefaultGroupName={#MyAppName}
 PrivilegesRequired=lowest
 OutputDir={#InstallerOutputDir}
-OutputBaseFilename=ElegooHooks-Setup-{#MyAppVersion}
+OutputBaseFilename={#InstallerBaseName}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
