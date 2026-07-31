@@ -1,4 +1,4 @@
-# Elegoo Printer Events
+# Elegoo Hooks
 
 Elegoo Printer Events is a Windows desktop application that launches your own
 executables when printer events such as print started, print completed,
