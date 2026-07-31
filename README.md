@@ -1,6 +1,6 @@
 # Elegoo Hooks
 
-Elegoo Printer Events is a Windows desktop application that launches your own
+Elegoo Hooks is a Windows desktop application that launches your own
 executables when printer events such as print started, print completed,
 connection changes, or printer errors occur. It also connects to Elegoo printers
 on the local network and displays their activity in a live per-printer event log.
@@ -85,7 +85,7 @@ retried from the printer list's context menu.
 
 Use **Minimize to tray** to hide the application in the Windows notification
 area while printer monitoring and event actions continue. Double-click the tray
-icon or select **Open Elegoo Printer Events** to restore the window. Select
+icon or select **Open Elegoo Hooks** to restore the window. Select
 **Exit** from the tray menu to disconnect and close the application. The normal
 Windows minimize button continues to minimize the application to the taskbar.
 
